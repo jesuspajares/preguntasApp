@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- TextView para mostrar el nombre del preguntador -->
+    <TextView
+        android:id="@+id/textPreguntador"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preguntador: "
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center" />
+
+    <!-- TextView para mostrar la pregunta -->
+    <TextView
+        android:id="@+id/textPregunta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pregunta"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center" />
+
+    <!-- Botones para los equipos -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnEquipo1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Equipo 1"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#007BFF"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnEquipo2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Equipo 2"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#FF4500"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <!-- Barra de progreso para los puntos -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <!-- Barra de progreso equipo 1 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Equipo 1"
+                android:textColor="#007BFF"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/progressEquipo1"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progress="0"
+                android:max="10"
+                android:progressTint="#007BFF" />
+        </LinearLayout>
+
+        <!-- Barra de progreso equipo 2 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Equipo 2"
+                android:textColor="#FF4500"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/progressEquipo2"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progress="0"
+                android:max="10"
+                android:progressTint="#FF4500" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- TextView para mostrar la puntuación -->
+    <TextView
+        android:id="@+id/textPuntuacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puntuación: 0 - 0"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:textColor="#000000"
+        android:layout_gravity="center" />
+
+    <!-- Botón para mostrar la respuesta -->
+    <Button
+        android:id="@+id/btnMostrarRespuesta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mostrar respuesta"
+        android:layout_gravity="center" />
+
+    <!-- Botón para pasar a la siguiente pregunta -->
+    <Button
+        android:id="@+id/btnSiguiente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Siguiente pregunta"
+        android:layout_gravity="center" />
+
+    <!-- Mostrar cuántas preguntas quedan -->
+    <TextView
+        android:id="@+id/textPreguntasRestantes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preguntas restantes: X"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
+
+    <!-- Botón para reiniciar -->
+    <Button
+        android:id="@+id/btnReiniciar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reiniciar"
+        android:layout_gravity="center"
+        android:backgroundTint="#28a745"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
