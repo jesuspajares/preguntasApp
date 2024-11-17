@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
         btnReiniciar.setOnClickListener {
             juego.resetJuego()
-            juego.preguntas = preguntasManager.leerPreguntasDesdeAssets()
+            juego.preguntas.shuffle()
             actualizarPuntuaciones()
             habilitarBotones()
             mostrarPreguntaActual()
