@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-
 }
 
 android {
@@ -38,6 +37,17 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+
+    // Agregar tarea para desinstalar la aplicación antes de construir
+    applicationVariants.all {
+        preBuildProvider.configure {
+            doFirst {
+                exec {
+                    commandLine("adb", "uninstall", "com.tuempresa.preguntasapp")
+                }
+            }
+        }
     }
 }
 
