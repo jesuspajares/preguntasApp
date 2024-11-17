@@ -6,7 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class PuntuacionManager(private val context: Context) {
-    private val sharedPreferences = context.getSharedPreferences("puntuaciones", Context.MODE_PRIVATE)
+    private val sharedPreferences =
+        context.getSharedPreferences("puntuaciones", Context.MODE_PRIVATE)
 
     fun guardarPuntuaciones(juego: Juego) {
         val editor = sharedPreferences.edit()
@@ -31,7 +32,9 @@ class PuntuacionManager(private val context: Context) {
         juego.puntosEquipo1 = sharedPreferences.getInt("puntosEquipo1", 0)
         juego.puntosEquipo2 = sharedPreferences.getInt("puntosEquipo2", 0)
         juego.preguntaActual = sharedPreferences.getInt("preguntaActual", 0)
-        juego.preguntasRespondidas = sharedPreferences.getStringSet("preguntasRespondidas", setOf())?.toMutableSet() ?: mutableSetOf()
+        juego.preguntasRespondidas =
+            sharedPreferences.getStringSet("preguntasRespondidas", setOf())?.toMutableSet()
+                ?: mutableSetOf()
 
         val preguntasJson = sharedPreferences.getString("preguntas", null)
         Log.d("PuntuacionManager", "Cargando preguntas: $preguntasJson")

@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var juego: Juego
     private lateinit var preguntasManager: PreguntasManager
     private lateinit var puntuacionManager: PuntuacionManager
-
     private lateinit var textPregunta: TextView
     private lateinit var textPreguntador: TextView
     private lateinit var textPreguntasRestantes: TextView
@@ -112,7 +111,8 @@ class MainActivity : AppCompatActivity() {
             val (preguntador, preguntaTexto, _) = pregunta
             textPreguntador.text = "Preguntador: $preguntador"
             textPregunta.text = preguntaTexto
-            textPreguntasRestantes.text = "Preguntas restantes: ${juego.preguntas.size - juego.preguntaActual}"
+            textPreguntasRestantes.text =
+                "Preguntas restantes: ${juego.preguntas.size - juego.preguntaActual}"
         } else if (juego.preguntaActual >= juego.preguntas.size) {
             mostrarFinDeJuego()
         }
