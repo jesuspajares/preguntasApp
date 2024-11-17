@@ -39,12 +39,16 @@ android {
         compose = true
     }
 
-    // Agregar tarea para desinstalar la aplicación antes de construir
     applicationVariants.all {
         preBuildProvider.configure {
             doFirst {
-                exec {
-                    commandLine("adb", "uninstall", "com.tuempresa.preguntasapp")
+                try {
+                    exec {
+                        commandLine("adb", "uninstall", "com.tuempresa.preguntasapp")
+                        isIgnoreExitValue = true
+                    }
+                } catch (e: Exception) {
+                    println("Error al intentar desinstalar la aplicación: ${e.message}")
                 }
             }
         }
