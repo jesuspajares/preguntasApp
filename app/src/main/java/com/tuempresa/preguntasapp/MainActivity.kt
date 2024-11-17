@@ -8,8 +8,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.apache.poi.ss.usermodel.WorkbookFactory
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainActivity : AppCompatActivity() {
+    //TODO: Modularizar
 
     private lateinit var textPregunta: TextView
     private lateinit var textPreguntador: TextView
@@ -30,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         mutableListOf<Triple<String, String, String>>() // Preguntador, Pregunta, Respuesta
     private var preguntaActual = 0
     private var preguntasRespondidas = mutableSetOf<String>() // Guardar preguntas ya respondidas
-    private var aleatoreizar = true
+    private var juegoNuevo = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +62,15 @@ class MainActivity : AppCompatActivity() {
 
         textPuntuacion.text = "Puntuacion: $puntosEquipo1 - $puntosEquipo2"
 
-        try {
+        //Recuperar las preguntas guardadas como JSON
+        val preguntasJson = sharedPreferences.getString("preguntas", null)
+        if (!preguntasJson.isNullOrEmpty()) {
+            val gson = Gson()
+            val tipo = object : TypeToken<MutableList<Triple<String, String, String>>>() {}.type
+            preguntas = gson.fromJson(preguntasJson, tipo)
+        }
+
+            try {
             leerPreguntasDesdeAssets()
         } catch (e: Exception) {
             Log.e("MainActivity", "Error al leer el archivo Excel: ${e.message}")
@@ -94,7 +105,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnReiniciar.setOnClickListener {
-            aleatoreizar = true
             leerPreguntasDesdeAssets()
             puntosEquipo1 = 0
             puntosEquipo2 = 0
@@ -107,47 +117,74 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun leerPreguntasDesdeAssets() {
-        val assetManager = assets
-        val inputStream = assetManager.open("preguntas.xlsx")
+        // Si las preguntas ya están cargadas, no las volvemos a leer
+        if (preguntas.isNotEmpty()) {
+            Log.d("MainActivity", "Preguntas ya están cargadas, no se leerán nuevamente.")
+            return
+        }
 
-        val workbook = WorkbookFactory.create(inputStream)
-        val sheet = workbook.getSheetAt(0)
+        // Si no están cargadas, las leemos desde el archivo Excel
+        try {
+            val assetManager = assets
+            val inputStream = assetManager.open("preguntas.xlsx")
 
-        // Leer las preguntas (desde la fila 2 en adelante)
-        val preguntasList = mutableListOf<Triple<String, String, String>>()
-        for (rowIndex in 1 until sheet.lastRowNum + 1) { // Usa lastRowNum en lugar de physicalNumberOfRows
-            val row = sheet.getRow(rowIndex) ?: continue // Salta filas nulas
+            val workbook = WorkbookFactory.create(inputStream)
+            val sheet = workbook.getSheetAt(0)
 
-            val preguntador = row.getCell(0)?.stringCellValue ?: "Desconocido"
-            val pregunta = row.getCell(1)?.stringCellValue ?: "Sin pregunta"
-            val respuesta = row.getCell(2)?.stringCellValue ?: "Sin respuesta"
+            // Leer las preguntas (desde la fila 2 en adelante)
+            val preguntasList = mutableListOf<Triple<String, String, String>>()
+            for (rowIndex in 1 until sheet.lastRowNum + 1) { // Usa lastRowNum en lugar de physicalNumberOfRows
+                val row = sheet.getRow(rowIndex) ?: continue // Salta filas nulas
 
-            if (pregunta.isNotBlank()) { // Asegúrate de que la pregunta no esté vacía
-                preguntasList.add(Triple(preguntador, pregunta, respuesta))
+                val preguntador = row.getCell(0)?.stringCellValue ?: "Desconocido"
+                val pregunta = row.getCell(1)?.stringCellValue ?: "Sin pregunta"
+                val respuesta = row.getCell(2)?.stringCellValue ?: "Sin respuesta"
+
+                if (pregunta.isNotBlank()) { // Asegúrate de que la pregunta no esté vacía
+                    preguntasList.add(Triple(preguntador, pregunta, respuesta))
+                }
             }
+
+            // Log para verificar
+            for ((index, pregunta) in preguntasList.withIndex()) {
+                val (preguntador, preguntaTexto, _) = pregunta
+                Log.d("PreguntasAleatorias", "Pregunta $index: $preguntaTexto (Respondida por: $preguntador)")
+            }
+
+            // Asignar las preguntas a la lista de preguntas
+            preguntas = preguntasList
+
+            workbook.close()
+
+            // Asegurar que las preguntas se barajen solo cuando se inicie un nuevo juego
+            if (juegoNuevo) {
+                preguntas.shuffle()
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error al leer el archivo Excel: ${e.message}")
+            AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage("No se pudo cargar el archivo de preguntas. Asegurate de que preguntas.xlsx esté incluido en assets.")
+                .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
+                .show()
         }
+    }
 
-        // Mezclar las preguntas de forma aleatoria
-        if (aleatoreizar) {
-            preguntasList.shuffle()
-            aleatoreizar = false
+
+    private fun esJuegoNuevo(){
+        Log.d("Puntos equipos","equipo1: $puntosEquipo1, equipo2: $puntosEquipo2. Preguntas hechas $preguntaActual")
+        if (puntosEquipo1 == 0 && puntosEquipo2 == 0 && preguntaActual == 0){
+            juegoNuevo = true
+            preguntas.shuffle()
+        } else {
+            juegoNuevo = false
         }
-
-        for ((index, pregunta) in preguntasList.withIndex()) {
-            val (preguntador, preguntaTexto, _) = pregunta
-            Log.d("PreguntasAleatorias", "Pregunta $index: $preguntaTexto (Respondida por: $preguntador)")
-        }
-
-        // Asignar las preguntas a la lista de preguntas
-        preguntas = preguntasList
-
-        workbook.close()
     }
 
     private fun mostrarPreguntaActual() {
-        // Verificar si la pregunta ya ha sido respondida
-        // TODO: Comprobar que preguntasRespondidas está bien definida porque con la primera entra y no debería
-        if (preguntaActual < preguntas.size && preguntasRespondidas.contains(preguntaActual.toString())) {
+        esJuegoNuevo()
+        // Verificar si la pregunta ya ha sido respondida solo si el juego no ha empezado ya
+        if (!juegoNuevo && preguntaActual < preguntas.size && preguntasRespondidas.contains(preguntaActual.toString())) {
             avanzarPregunta() // Si ya se ha respondido, avanzar a la siguiente
             return
         }
@@ -193,9 +230,16 @@ class MainActivity : AppCompatActivity() {
         editor.putInt("puntosEquipo2", puntosEquipo2)
         editor.putInt("preguntaActual", preguntaActual)
 
+
         // Guardar las preguntas respondidas
         preguntasRespondidas.add(preguntaActual.toString())
         editor.putStringSet("preguntasRespondidas", preguntasRespondidas)
+
+        //Convertir la lista de preguntas a JSON y guardarla
+        val gson = Gson()
+        val preguntasJson = gson.toJson(preguntas)
+        editor.putString("preguntas", preguntasJson)
+
         editor.apply()
     }
 
