@@ -7,5 +7,5 @@ internal sealed interface NavigationItem {
     data object PreguntasScreen : NavigationItem
 
     @Serializable
-    data object EndGameScreen : NavigationItem
+    data class EndGameScreen(val ganador: String) : NavigationItem
 }

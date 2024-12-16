@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.tuempresa.preguntasapp.NavigationItem.EndGameScreen
 
 @Composable
@@ -47,10 +48,11 @@ fun Navigation(
                 preguntasManager,
                 puntuacionManager,
                 juego,
-                onEndGame = { navController.navigate(route = EndGameScreen) })
+                onEndGame = { ganador -> navController.navigate(route = EndGameScreen(ganador)) })
         }
-        composable<EndGameScreen> {
-            EndGameScreen()
+        composable<EndGameScreen> { backStackEntry ->
+            val navArg: EndGameScreen = backStackEntry.toRoute()
+            EndGameScreen(equipoGanador = navArg.ganador)
         }
     }
 }
